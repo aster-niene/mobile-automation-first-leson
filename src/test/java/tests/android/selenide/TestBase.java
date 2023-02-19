@@ -1,16 +1,16 @@
 package tests.android.selenide;
 
-import com.codeborne.selenide.Config;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.logevents.SelenideLogger;
 import drivers.BrowserstackDriver;
+import drivers.helpers.Attach;
 import io.qameta.allure.selenide.AllureSelenide;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
-import static com.codeborne.selenide.Selenide.closeWebDriver;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
+import static drivers.helpers.Browserstack.getVideoUrl;
 
 public class TestBase {
 
@@ -20,16 +20,23 @@ public class TestBase {
         Configuration.browserSize = null;
     }
 
-
     @BeforeEach
     void addListner() {
         SelenideLogger.addListener("AllureSelenide", new AllureSelenide());
         open();
     }
 
-
     @AfterEach
     void addAttachments() {
+        String sessionId = sessionId().toString();
+
+//        Attach.screenshotAs("Last screenshot");
+        Attach.pageSource();
+
+
         closeWebDriver();
+        Attach.addVideo(sessionId);
+
+        System.out.println(getVideoUrl(sessionId));
     }
 }
